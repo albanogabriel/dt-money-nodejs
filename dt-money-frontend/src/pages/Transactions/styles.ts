@@ -29,9 +29,9 @@ export const TransactionTable = styled.table`
 `
 
 interface PriceHighLightProps {
-  variant: 'income' | 'outcome'
+  variant: 'credit' | 'debit'
 }
 
 export const PriceHighLight = styled.span<PriceHighLightProps>`
-  color: ${ props => props.variant === 'income' ? props.theme["green-300"] : props.theme["red-300"]} ;
+  color: ${ props => props.variant === 'credit' ? props.theme["green-300"] : props.theme["red-300"]} ;
 `

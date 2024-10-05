@@ -82,7 +82,7 @@ export const TransctionTypeRGRoot = styled(RadioGroup.Root)`
 `
 
 interface TransctionTypeButtonProps {
-  variant: 'income' | 'outcome'
+  variant: 'credit' | 'debit'
 }
 
 export const TransctionTypeButtonRGItem = styled(RadioGroup.Item)<TransctionTypeButtonProps>`
@@ -98,7 +98,7 @@ export const TransctionTypeButtonRGItem = styled(RadioGroup.Item)<TransctionType
   cursor: pointer;
 
   svg {
-    color: ${props => props.variant === 'income' ? props.theme["green-300"] : props.theme["red-300"]};
+    color: ${props => props.variant === 'credit' ? props.theme["green-300"] : props.theme["red-300"]};
   }
 
   &[data-state='unchecked']:hover {
@@ -109,7 +109,7 @@ export const TransctionTypeButtonRGItem = styled(RadioGroup.Item)<TransctionType
   &[data-state='checked'] {
     color: ${props => props.theme.white};
 
-    background: ${props=> props.variant === 'income' ? props.theme["green-500"] : props.theme["red-500"]};
+    background: ${props=> props.variant === 'credit' ? props.theme["green-500"] : props.theme["red-500"]};
 
     svg {
       color: ${props => props.theme.white};

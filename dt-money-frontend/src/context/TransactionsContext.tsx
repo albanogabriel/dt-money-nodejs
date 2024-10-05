@@ -4,23 +4,22 @@ import { api } from "../lib/axios";
 
 interface transaction {
   id: number
-  description: string
-  type: 'income' | 'outcome'
-  category: string
-  price: number
-  createdAt: string
+  title: string
+  type: 'credit' | 'debit'
+  amount: number
+  created_at: string
 }
 
 interface CreateTransactionProps {
-  description: string
-  price: number
-  category: string
-  type: 'income' | 'outcome'
+  title: string
+  amount: number
+  type: 'credit' | 'debit'
 }
 
 // interface que declara qual as informações que vou armazenar/retornar do meu contexto
 export interface transactionsContextType {
   transactions: transaction[]
+  token: string | null
   fetchTransactions: (query?: string) => Promise<void>
   createTransaction: (data: CreateTransactionProps) => Promise<void>
 }
@@ -36,28 +35,42 @@ interface TransactionsContextProviderProps {
 // Componente Provider
 export function TransactionsContextProvider({ children }: TransactionsContextProviderProps) {
   const [transactions , setTransactions] = useState<transaction[]>([])
+  const [token , setToken] = useState<string | null>(null)
 
-  const fetchTransactions = useCallback(async (query?: string) => {
-    const response = await api.get('/transactions', {
-      params: {
-        _sort: 'createdAt',
-        _order: 'desc',
-        q: query
-      }
-    })
-    setTransactions(response.data)
-  }, [])
+  // const fetchTransactions = useCallback(async (query?: string) => {
+  //   const response = await api.get('/transactions', {
+  //     params: {
+  //       _sort: 'createdAt',
+  //       _order: 'desc',
+  //       q: query
+  //     }
+  //   })
+    
+  //   setTransactions(response.data)
+    
+  // }, [])
+  const fetchTransactions = useCallback(async () => {
+    try {
+      const response = await api.get('/transactions');
+      setTransactions(response.data.transactions); // ajustei aqui
+    } catch (error) {
+      console.log('fetchTransactions error:', error);
+    }
+  }, []);
 
   const createTransaction = useCallback(async (data: CreateTransactionProps) => {
-    const { description, price, category, type } = data
+    const { title, amount, type } = data
     
     const response = await api.post('/transactions', {
-      description,
-      price,
-      category,
+      title,
+      amount,
       type,
-      createdAt: new Date(),
     })
+
+    if (response.data.sessionId) {
+      localStorage.setItem('sessionId', response.data.sessionId)
+      setToken(response.data.sessionId)
+    }
 
     // 1º Passo - setTransactions([...transactions, response.data])
     // 2º Passo - quando eu vou fazer atualização de estado que depende de um valor anterior daquele estado, é melhor fazer utilizando um callback: state => [...state, response.data]
@@ -71,7 +84,7 @@ export function TransactionsContextProvider({ children }: TransactionsContextPro
   }, [fetchTransactions])
 
   return (
-    <TransactionsContext.Provider value={{ transactions, fetchTransactions, createTransaction }}>
+    <TransactionsContext.Provider value={{ transactions, token, fetchTransactions, createTransaction }}>
       {children}
     </TransactionsContext.Provider>
   )

@@ -1,6 +1,6 @@
 
 import { Header } from "../../components/Header";
-import { Summary } from "../../components/Summary";
+// import { Summary } from "../../components/Summary";
 import { SearchForm } from "./components/SearchForm";
 import { PriceHighLight, TransactionTable, TransactionsContainer } from "./styles";
 import { TransactionsContext } from "../../context/TransactionsContext";
@@ -12,10 +12,12 @@ export function Transactions() {
     return context.transactions
   })
 
+  console.log(transactions)
+
   return (
     <div>
       <Header />
-      <Summary />
+      {/* <Summary /> */}
       <TransactionsContainer>
         <SearchForm />
 
@@ -24,15 +26,14 @@ export function Transactions() {
             {transactions.map(transaction => {
               return (
                 <tr key={transaction.id}>
-                  <td width="50%">{transaction.description}</td>
+                  <td width="50%">{transaction.title}</td>
                   <td>
                     <PriceHighLight variant={transaction.type}>
-                      {transaction.type === 'outcome' && '- '}
-                      {priceFormatter.format(transaction.price)}
+                      {transaction.type === 'debit' && '- '}
+                      {priceFormatter.format(transaction.amount)}
                     </PriceHighLight>
                   </td>
-                  <td>{transaction.category}</td>
-                  <td>{dateFormatter.format(new Date(transaction.createdAt))}</td>
+                  <td>{dateFormatter.format(new Date(transaction.created_at))}</td>
                 </tr>
               )
             })}

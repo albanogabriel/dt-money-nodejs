@@ -10,10 +10,9 @@ import { TransactionsContext } from "../../context/TransactionsContext";
 import { useContextSelector } from "use-context-selector";
 
 const newTransactionSchema = z.object({
-  description: z.string(),
-  price: z.number(),
-  category: z.string(),
-  type: z.enum(['outcome', 'income'])
+  title: z.string(),
+  amount: z.number(),
+  type: z.enum(['credit', 'debit'])
 })
 
 type NewTransactionSchemaType = z.infer<typeof newTransactionSchema>
@@ -27,7 +26,7 @@ export function NewTransctionModal() {
   const { handleSubmit, register, formState: { isSubmitting }, /* setValue , */ control, reset } = useForm<NewTransactionSchemaType>({
     resolver: zodResolver(newTransactionSchema),
     defaultValues: {
-      type: 'income'
+      type: 'credit'
     }
   })
 
@@ -52,21 +51,15 @@ export function NewTransctionModal() {
         <form onSubmit={handleSubmit(handleAddNewTransaction)} action="">
           <input 
             type="text"
-            placeholder="Descrição"
+            placeholder="Transação"
             required
-            {...register('description')}
+            {...register('title')}
           />
           <input 
             type="number"
             placeholder="Preço"
             required
-            {...register('price', { valueAsNumber: true })}
-          />
-          <input 
-            type="text"
-            placeholder="Categoria"
-            required
-            {...register('category')}
+            {...register('amount', { valueAsNumber: true })}
           />
 
           <Controller 
@@ -75,11 +68,11 @@ export function NewTransctionModal() {
             render={( { field } ) => {
               return (
                 <TransctionTypeRGRoot onValueChange={field.onChange} value={field.value}>
-                  <TransctionTypeButtonRGItem variant="income" value="income">
+                  <TransctionTypeButtonRGItem variant="credit" value="credit">
                     <ArrowCircleUp size={20} />
                     Entrada
                   </TransctionTypeButtonRGItem>
-                  <TransctionTypeButtonRGItem variant="outcome" value="outcome">
+                  <TransctionTypeButtonRGItem variant="debit" value="outcome">
                     <ArrowCircleDown size={20} />
                     Saída
                   </TransctionTypeButtonRGItem>
