@@ -1,0 +1,47 @@
+# Full-Stack Project using React.js and Node.js (Fastify + Knex + SQL)
+
+This project demonstrates the integration of a React.js frontend with a Node.js backend using Fastify and Knex for managing SQL databases.
+
+# Run Project
+
+## Run Project
+
+| Etapa               | Comando                |
+|---------------------|------------------------|
+| Clone Project       | `git clone <repo-url>` |
+
+### Backend
+
+| Etapa               | Comando                |
+|---------------------|------------------------|
+| Entrar no backend   | `cd dt-money-backend`       |
+| Rodar o servidor    | `npm run dev`           |
+
+### Frontend
+
+| Etapa               | Comando                |
+|---------------------|------------------------|
+| Entrar no front-end | `cd dt-money-front-end`     |
+| Rodar o servidor    | `npm run dev`           |
+
+
+## Frontend (React.js)
+
+- **React**: Used for building the user interface, with **Vite** as the bundler for fast development and optimized builds.
+  - **Axios**: Manages HTTP requests between the frontend and the backend.
+  - **Phosphor React**: Provides a set of customizable icons for the UI.
+  - **Zod** + **React Hook Form (useForm)**: Used to manage form validation and handle uncontrolled forms efficiently.
+
+## Backend (Node.js)
+
+- **Node.js**: The runtime environment used to create the REST API.
+  - **Fastify**: A lightweight and fast Node.js framework for building APIs.
+  - **Knex**: A SQL query builder that simplifies database queries and migrations, making it easier to work with databases in JavaScript.
+  - **SQLite**: The database used in the development environment for simplicity and ease of use.
+  - **Tsup**: A TypeScript compiler used to bundle and compile TypeScript into JavaScript for deployment.
+
+## Key Learnings
+
+- Integration of a frontend built with React.js and a backend using Node.js with Fastify.
+- Handling database migrations and queries using **Knex**.
+- Compiling TypeScript to JavaScript using **Tsup**, allowing for the use of TypeScript in the backend to type-check interfaces and database models.

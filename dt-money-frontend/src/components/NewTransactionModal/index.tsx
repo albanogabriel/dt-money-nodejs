@@ -31,8 +31,8 @@ export function NewTransctionModal() {
   })
 
   async function handleAddNewTransaction(data: NewTransactionSchemaType) {
-    console.log('data', data)
     createTransaction(data)
+    
     reset()
   }
 
