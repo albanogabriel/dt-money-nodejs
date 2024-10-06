@@ -35,3 +35,12 @@ interface PriceHighLightProps {
 export const PriceHighLight = styled.span<PriceHighLightProps>`
   color: ${ props => props.variant === 'credit' ? props.theme["green-300"] : props.theme["red-300"]} ;
 `
+
+export const DeleteButton = styled.button`
+  background-color: ${props => props.theme["red-500"]};
+  color: white;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+`

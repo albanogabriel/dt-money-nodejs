@@ -2,16 +2,17 @@
 import { Header } from "../../components/Header";
 // import { Summary } from "../../components/Summary";
 import { SearchForm } from "./components/SearchForm";
-import { PriceHighLight, TransactionTable, TransactionsContainer } from "./styles";
+import { DeleteButton, PriceHighLight, TransactionTable, TransactionsContainer } from "./styles";
 import { TransactionsContext } from "../../context/TransactionsContext";
 import { dateFormatter, priceFormatter } from "../../utils/formatter";
 import { useContextSelector } from "use-context-selector";
 import { Summary } from "../../components/Summary";
 
 export function Transactions() {
-  const transactions = useContextSelector(TransactionsContext , (context) => {
-    return context.transactions
+  const { transactions, deleteTransaction } = useContextSelector(TransactionsContext , (context) => {
+    return context
   })
+
 
   return (
     <div>
@@ -32,6 +33,9 @@ export function Transactions() {
                     </PriceHighLight>
                   </td>
                   <td>{dateFormatter.format(new Date(transaction.created_at))}</td>
+                  <td>
+                    <DeleteButton onClick={() => deleteTransaction(transaction.id)}>Delete</DeleteButton>
+                  </td>
                 </tr>
               )
             })}

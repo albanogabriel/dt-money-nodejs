@@ -3,7 +3,7 @@ import { createContext } from 'use-context-selector'
 import { api } from "../lib/axios";
 
 interface transaction {
-  id: number
+  id: string
   title: string
   type: 'credit' | 'debit'
   amount: number
@@ -22,6 +22,7 @@ export interface transactionsContextType {
   token: string | null
   fetchTransactions: (query?: string) => Promise<void>
   createTransaction: (data: CreateTransactionProps) => Promise<void>
+  deleteTransaction: (id: string) => Promise<void>
 }
 
 // Meu contexto em si que passará um objeto as transactionContextType
@@ -49,6 +50,7 @@ export function TransactionsContextProvider({ children }: TransactionsContextPro
   //   setTransactions(response.data)
     
   // }, [])
+
   const fetchTransactions = useCallback(async () => {
     try {
       const response = await api.get('/transactions');
@@ -67,24 +69,38 @@ export function TransactionsContextProvider({ children }: TransactionsContextPro
       type,
     })
 
+    const newTransaction = {
+      created_at: new Date(),
+      ...response.data
+    }
+
+    setTransactions(state => [newTransaction, ...state])
+
     if (response.data.sessionId) {
       localStorage.setItem('sessionId', response.data.sessionId)
       setToken(response.data.sessionId)
     }
 
-    // 1º Passo - setTransactions([...transactions, response.data])
-    // 2º Passo - quando eu vou fazer atualização de estado que depende de um valor anterior daquele estado, é melhor fazer utilizando um callback: state => [...state, response.data]
-    // 3º Passo - setTransactions(state => [...state, response.data])
-    // 4º Passo - e como ela vai ser a mais recente, por conta do meus params definidos no axios, sabe-se que para ordenar da maneira correta, precisamos inverter a ordem
-    setTransactions(state => [response.data, ...state])
   }, [])
+
+  const deleteTransaction = async (id: string) => {
+    try {
+      await api.delete(`/transactions/${id}`)
+      
+      const transactionsWithoutDeletedOne = transactions.filter(transactions => transactions.id !== id)
+      setTransactions(transactionsWithoutDeletedOne)
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
 
   useEffect(() => {
     fetchTransactions()
   }, [fetchTransactions])
 
   return (
-    <TransactionsContext.Provider value={{ transactions, token, fetchTransactions, createTransaction }}>
+    <TransactionsContext.Provider value={{ transactions, token, fetchTransactions, createTransaction, deleteTransaction }}>
       {children}
     </TransactionsContext.Provider>
   )
