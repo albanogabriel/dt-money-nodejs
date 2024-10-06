@@ -31,6 +31,7 @@ export function NewTransctionModal() {
   })
 
   async function handleAddNewTransaction(data: NewTransactionSchemaType) {
+    console.log('data', data)
     createTransaction(data)
     reset()
   }
@@ -72,7 +73,7 @@ export function NewTransctionModal() {
                     <ArrowCircleUp size={20} />
                     Entrada
                   </TransctionTypeButtonRGItem>
-                  <TransctionTypeButtonRGItem variant="debit" value="outcome">
+                  <TransctionTypeButtonRGItem variant="debit" value="debit">
                     <ArrowCircleDown size={20} />
                     Saída
                   </TransctionTypeButtonRGItem>
