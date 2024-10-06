@@ -8,12 +8,12 @@ export function useSummary() {
 
   const summary = transactions.reduce(
       (acc, transaction) => {
-        if (transaction.type === 'income') {
-          acc.income += transaction.price
-          acc.total += transaction.price
+        if (transaction.type === 'credit') {
+          acc.income += transaction.amount
+          acc.total += transaction.amount
         } else {
-          acc.outcome += transaction.price
-          acc.total -= transaction.price
+          acc.outcome += transaction.amount
+          acc.total -= transaction.amount
         }
         
         return acc

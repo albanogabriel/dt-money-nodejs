@@ -6,18 +6,17 @@ import { PriceHighLight, TransactionTable, TransactionsContainer } from "./style
 import { TransactionsContext } from "../../context/TransactionsContext";
 import { dateFormatter, priceFormatter } from "../../utils/formatter";
 import { useContextSelector } from "use-context-selector";
+import { Summary } from "../../components/Summary";
 
 export function Transactions() {
   const transactions = useContextSelector(TransactionsContext , (context) => {
     return context.transactions
   })
 
-  console.log(transactions)
-
   return (
     <div>
       <Header />
-      {/* <Summary /> */}
+      <Summary />
       <TransactionsContainer>
         <SearchForm />
 
@@ -29,7 +28,6 @@ export function Transactions() {
                   <td width="50%">{transaction.title}</td>
                   <td>
                     <PriceHighLight variant={transaction.type}>
-                      {transaction.type === 'debit' && '- '}
                       {priceFormatter.format(transaction.amount)}
                     </PriceHighLight>
                   </td>
