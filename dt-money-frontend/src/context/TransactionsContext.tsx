@@ -1,11 +1,11 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
-import { createContext } from 'use-context-selector'
-import { api } from "../lib/axios";
+import { ReactNode, useCallback, useEffect, useState } from "react"
+import { createContext } from "use-context-selector"
+import { api } from "../lib/axios"
 
 interface transaction {
   id: string
   title: string
-  type: 'credit' | 'debit'
+  type: "credit" | "debit"
   amount: number
   created_at: string
 }
@@ -13,14 +13,14 @@ interface transaction {
 interface CreateTransactionProps {
   title: string
   amount: number
-  type: 'credit' | 'debit'
+  type: "credit" | "debit"
 }
 
 // interface que declara qual as informações que vou armazenar/retornar do meu contexto
 export interface transactionsContextType {
   transactions: transaction[]
   token: string | null
-  fetchTransactions: (data: { query: string; type: string }) => Promise<void>
+  fetchTransactions: (data: { title: string; type: string }) => Promise<void>
   createTransaction: (data: CreateTransactionProps) => Promise<void>
   deleteTransaction: (id: string) => Promise<void>
 }
@@ -34,76 +34,91 @@ interface TransactionsContextProviderProps {
 }
 
 // Componente Provider
-export function TransactionsContextProvider({ children }: TransactionsContextProviderProps) {
-  const [transactions , setTransactions] = useState<transaction[]>([])
-  const [token , setToken] = useState<string | null>(null)
+export function TransactionsContextProvider({
+  children,
+}: TransactionsContextProviderProps) {
+  const [transactions, setTransactions] = useState<transaction[]>([])
+  const [token, setToken] = useState<string | null>(null)
 
-  const fetchTransactions = useCallback(async ({ query, type}: {
-    query: string,
-    type: string,
-  }) => {
-    try {
-      const params = new URLSearchParams();
+  const fetchTransactions = useCallback(
+    async ({ title, type }: { title: string; type: string }) => {
+      try {
+        const params = new URLSearchParams()
 
-      if (query) {
-        params.append('query', query);
+        if (title) {
+          params.append("title", title)
+        }
+
+        if (type) {
+          params.append("type", type)
+        }
+
+        console.log(`/transactions/search?${params.toString()}`)
+        // Fazer a requisição GET com os parâmetros na URL
+        const response = await api.get(
+          `/transactions/search?${params.toString()}`
+        )
+
+        setTransactions(response.data.transactions)
+      } catch (error) {
+        console.log("fetchTransactions error:", error)
       }
-  
-      if (type) {
-        params.append('type', type);
+    },
+    []
+  )
+
+  const createTransaction = useCallback(
+    async (data: CreateTransactionProps) => {
+      const { title, amount, type } = data
+
+      const response = await api.post("/transactions", {
+        title,
+        amount,
+        type,
+      })
+
+      const newTransaction = {
+        created_at: new Date(),
+        ...response.data,
       }
-      
-      console.log(`/transactions/search?${params.toString()}`)
-      // Fazer a requisição GET com os parâmetros na URL
-      const response = await api.get(`/transactions/search?${params.toString()}`);
-  
-      setTransactions(response.data.transactions);
-    } catch (error) {
-      console.log('fetchTransactions error:', error);
-    }
-  }, []);
 
-  const createTransaction = useCallback(async (data: CreateTransactionProps) => {
-    const { title, amount, type } = data
-    
-    const response = await api.post('/transactions', {
-      title,
-      amount,
-      type,
-    })
+      setTransactions((state) => [newTransaction, ...state])
 
-    const newTransaction = {
-      created_at: new Date(),
-      ...response.data
-    }
-
-    setTransactions(state => [newTransaction, ...state])
-
-    if (response.data.sessionId) {
-      localStorage.setItem('sessionId', response.data.sessionId)
-      setToken(response.data.sessionId)
-    }
-
-  }, [])
+      if (response.data.sessionId) {
+        localStorage.setItem("sessionId", response.data.sessionId)
+        setToken(response.data.sessionId)
+      }
+    },
+    []
+  )
 
   const deleteTransaction = async (id: string) => {
     try {
       await api.delete(`/transactions/${id}`)
-      
-      const transactionsWithoutDeletedOne = transactions.filter(transactions => transactions.id !== id)
+
+      const transactionsWithoutDeletedOne = transactions.filter(
+        (transactions) => transactions.id !== id
+      )
       setTransactions(transactionsWithoutDeletedOne)
     } catch (error) {
       console.log(error)
     }
-
   }
 
   useEffect(() => {
-    fetchTransactions({ query: '', type: ''})
+    fetchTransactions({ title: "", type: "" })
   }, [fetchTransactions])
 
   return (
-    <TransactionsContext.Provider value={{ transactions, token, fetchTransactions, createTransaction, deleteTransaction }}>
+    <TransactionsContext.Provider
+      value={{
+        transactions,
+        token,
+        fetchTransactions,
+        createTransaction,
+        deleteTransaction,
+      }}
+    >
       {children}
     </TransactionsContext.Provider>
   )

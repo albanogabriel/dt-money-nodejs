@@ -8,7 +8,7 @@ import { useContextSelector } from "use-context-selector"
 import { memo } from "react"
 
 const searchFormSchema = z.object({
-  query: z.string(),
+  title: z.string(),
   type: z.string(),
 })
 
@@ -31,14 +31,13 @@ function SearchFormComponent() {
   } = useForm<SearchFormSchemaType>({
     resolver: zodResolver(searchFormSchema),
     defaultValues: {
-      query: "",
+      title: "",
       type: "",
     },
   })
 
   async function handleSearchTransactions(data: SearchFormSchemaType) {
-    console.log(data)
-    await fetchTransactions({ query: data.query, type: data.type })
+    await fetchTransactions({ title: data.title, type: data.type })
     reset()
   }
 
@@ -47,7 +46,7 @@ function SearchFormComponent() {
       <input
         type="text"
         placeholder="Busque suas transações"
-        {...register("query")}
+        {...register("title")}
       />
 
       <Controller
