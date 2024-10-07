@@ -20,7 +20,7 @@ interface CreateTransactionProps {
 export interface transactionsContextType {
   transactions: transaction[]
   token: string | null
-  fetchTransactions: (query?: string) => Promise<void>
+  fetchTransactions: (data: { query: string; type: string }) => Promise<void>
   createTransaction: (data: CreateTransactionProps) => Promise<void>
   deleteTransaction: (id: string) => Promise<void>
 }
@@ -38,23 +38,26 @@ export function TransactionsContextProvider({ children }: TransactionsContextPro
   const [transactions , setTransactions] = useState<transaction[]>([])
   const [token , setToken] = useState<string | null>(null)
 
-  // const fetchTransactions = useCallback(async (query?: string) => {
-  //   const response = await api.get('/transactions', {
-  //     params: {
-  //       _sort: 'createdAt',
-  //       _order: 'desc',
-  //       q: query
-  //     }
-  //   })
-    
-  //   setTransactions(response.data)
-    
-  // }, [])
-
-  const fetchTransactions = useCallback(async () => {
+  const fetchTransactions = useCallback(async ({ query, type}: {
+    query: string,
+    type: string,
+  }) => {
     try {
-      const response = await api.get('/transactions');
-      setTransactions(response.data.transactions); // ajustei aqui
+      const params = new URLSearchParams();
+
+      if (query) {
+        params.append('query', query);
+      }
+  
+      if (type) {
+        params.append('type', type);
+      }
+      
+      console.log(`/transactions/search?${params.toString()}`)
+      // Fazer a requisição GET com os parâmetros na URL
+      const response = await api.get(`/transactions/search?${params.toString()}`);
+  
+      setTransactions(response.data.transactions);
     } catch (error) {
       console.log('fetchTransactions error:', error);
     }
@@ -96,7 +99,7 @@ export function TransactionsContextProvider({ children }: TransactionsContextPro
   }
 
   useEffect(() => {
-    fetchTransactions()
+    fetchTransactions({ query: '', type: ''})
   }, [fetchTransactions])
 
   return (
